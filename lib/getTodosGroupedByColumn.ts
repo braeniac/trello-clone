@@ -1,16 +1,15 @@
 import { databases } from "@/appwrite"
 
 export const getTodosGroupedByColumn = async () => {
+    //get data from appwrite
     const data = await databases.listDocuments(
         process.env.NEXT_PUBLIC_DATABASE_ID!,
         process.env.NEXT_PUBLIC_TODOS_COLLECTION_ID!
     ); 
 
-    console.log(data); 
-
-
     const todos = data.documents; 
 
+    //aggregate data to fit a column
     const columns = todos.reduce((acculatorValue, todo) => {
         if (!acculatorValue.get(todo.status)) {
             acculatorValue.set(todo.status, {
@@ -34,8 +33,28 @@ export const getTodosGroupedByColumn = async () => {
 
     const columnTypes : TypedColumn[] = ["todo", "inprogress", "done"]
 
-    for () {
-        
+    //if columns doesn't have inprogress, todo, and done
+    //add empty todos
+    for (const columnType of columnTypes) {
+        if (!columns.get(columnType)) {
+            columns.set(columnType, {
+                id: columnType, 
+                todos: []
+            })
+        }
     }
+
+    //sort by the column types 
+    const sortedColumns = new Map(
+        Array.from(columns.entries()).sort(
+            (a, b) => (columnTypes.indexOf(a[0]) - columnTypes.indexOf(b[0]))
+        )
+    )
+
+    const board : Board = {
+        columns : sortedColumns
+    }
+
+    return board; 
 
 }
