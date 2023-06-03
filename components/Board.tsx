@@ -60,6 +60,50 @@ function Board() {
     //drag and drop in the same location 
     if ((source.index === destination.index) && (startCol === endCol)) return; 
 
+    const newTodos = startCol.todos; 
+    const [todoMoved] = newTodos.splice(source.index, 1); 
+
+    // we drag and drop in the same column 
+    if (startCol.id === endCol.id) {
+      newTodos.splice(destination.index, 0, todoMoved); 
+      const newCol = {
+        id: startCol.id, 
+        todos: newTodos
+      }
+      const newColumns = new Map(board.columns); 
+      newColumns.set(startCol.id, newCol);
+
+      setBoardState({
+        ...board, columns : newColumns
+      });
+
+    } else {
+      // we drag and drop in a different column
+      const finishedTodos = Array.from(endCol.todos) 
+      finishedTodos.splice(destination.index, 0, todoMoved); 
+
+      const newColumns = new Map(board.columns);
+      const newCol = {
+        id: startCol.id, 
+        todos: startCol.todos
+      } 
+
+      newColumns.set(startCol.id, newCol); 
+      newColumns.set(endCol.id, {
+        id: endCol.id, 
+        todos: finishedTodos
+      })
+
+      //update in DATABASE 
+
+      setBoardState({
+        ...board, columns : newColumns
+      });
+
+    }
+
+
+
       
 
   }
