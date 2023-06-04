@@ -46,7 +46,7 @@ function Column({ id, todos, index} : Props) {
                                         <span 
                                             className="text-gray-500 bg-gray-200 rounded-full font-normal text-xs px-2 py-1 items-center"
                                         >
-                                            {todos.length}
+                                            {!searchString ? todos.length : todos.filter(todo => todo.title.toLowerCase().includes(searchString.toLowerCase())).length}
                                         </span>    
                                     </h2>
 
@@ -57,10 +57,6 @@ function Column({ id, todos, index} : Props) {
                                                 //search 
                                                 if (searchString && !todo.title.toLowerCase().includes(searchString.toLowerCase())) 
                                                     return null; 
-                                                
-
-
-
 
                                                 return (
                                                 <Draggable
