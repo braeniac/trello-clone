@@ -2,9 +2,17 @@
 import Image from 'next/image'
 import { UserCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import Avatar from 'react-avatar'; 
+import { useBoardStore } from '@/store/BoardStore';
 
 
 function Header() {
+
+  const [ searchString, setSearchString ] = useBoardStore((state) => [
+    state.searchString, 
+    state.setSearchString,
+  ]); 
+
+
   return (
     <header>
         <div className='flex flex-col md:flex-row p-5 items-center bg-gray-500/10 rounded-b-2xl'>
@@ -28,7 +36,9 @@ function Header() {
                     type="text"
                     placeholder='Search'
                     className='flex-1 outline-none p-2'
-                    />
+                    value={searchString}
+                    onChange={(e) => setSearchString(e.target.value) }
+                />
                 <button 
                     hidden 
                     type="submit"
