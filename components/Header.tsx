@@ -3,14 +3,35 @@ import Image from 'next/image'
 import { UserCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import Avatar from 'react-avatar'; 
 import { useBoardStore } from '@/store/BoardStore';
+import { useEffect, useState } from 'react';
 
 
 function Header() {
 
-  const [ searchString, setSearchString ] = useBoardStore((state) => [
+  const [ board, searchString, setSearchString ] = useBoardStore((state) => [
+    state.board, 
     state.searchString, 
     state.setSearchString,
   ]); 
+
+  const [loading, setLoading] = useState<Boolean>(false); 
+  const [suggestion, setSuggestion] = useState<String>(""); 
+
+  useEffect(() => {
+    
+    if (board.columns.size === 0) return;
+    setLoading(true); 
+
+    const fetchSuggestionFunc = async () => {
+        const suggestion = await fetchSuggestion(board); 
+        setSuggestion(suggestion); 
+        setLoading(false); 
+    }
+    
+    fetchSuggestionFunc(); 
+
+  }, [board])
+
 
 
   return (
