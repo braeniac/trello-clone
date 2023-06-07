@@ -19,18 +19,14 @@ function Header() {
   const [suggestion, setSuggestion] = useState<String>(""); 
 
   useEffect(() => {
-    
     if (board.columns.size === 0) return;
     setLoading(true); 
-
     const fetchSuggestionFunc = async () => {
         const a = await fetchSuggestion(board); 
         setSuggestion(a); 
         setLoading(false); 
     }
-    
     fetchSuggestionFunc(); 
-
   }, [board])
 
 

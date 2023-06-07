@@ -13,7 +13,7 @@ export async function POST(request: Request) {
             messages: [
                 {
                     role: "system",
-                    content: `When responding, welcome the user always as Mr. Singh and say welcome to the todo app! 
+                    content: `When responding, welcome the user always as "Welcome to Trello Maninder!"
                     Limit the response to 200 characters`
                 },
                 {
