@@ -13,6 +13,15 @@ interface BoardState {
 
     deleteTask: (taskIndex: number, todoId: todo, id: TypedColumn) => void; 
 
+    newTaskInput: string; 
+    setNewTaskInput: (input:string) => void; 
+
+    newTaskType: TypedColumn; 
+    setNewTaskType: (type: TypedColumn) => void; 
+
+    image : File | null; 
+    setImage : (image: File | null) => void; 
+
 }   
 
 
@@ -29,6 +38,17 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   
   setBoardState : (board) => {
     set({ board }); 
+  },
+
+  image: null, 
+  setImage: (image) => set({ image }), 
+
+  newTaskType: "todo",
+  setNewTaskType: (type) => set({ newTaskType: type }),
+  
+  newTaskInput: "",
+  setNewTaskInput: (input) => {
+     set({ newTaskInput : input })
   },
 
   updateTodoInDb : async (todo, columnId) => {
@@ -64,7 +84,5 @@ export const useBoardStore = create<BoardState>((set, get) => ({
       process.env.NEXT_PUBLIC_DATABASE_ID!,
       process.env.NEXT_PUBLIC_TODOS_COLLECTION_ID!, 
       todo.$id, 
-    )
-
-  }
+    )}
 }))
