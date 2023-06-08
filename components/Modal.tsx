@@ -5,6 +5,7 @@ import { useModalStore } from '@/store/ModalStore'
 import { useBoardStore } from '@/store/BoardStore';
 import TaskTypeRadioGroup from './TaskTypeRadioGroup';
 import Image from 'next/image';
+import { PhotoIcon } from '@heroicons/react/24/solid';
 
 function Modal() {
 
@@ -79,10 +80,21 @@ function Modal() {
                 {/* radio group  */}
                 <TaskTypeRadioGroup />
 
-                
-
                 {/* file picker */}
                 <div>
+
+                  <button
+                    className='w-full border border-gray-300 rounded-md outline-none p-5 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
+                    onClick={() => {
+                      imagePickerRef.current?.click()
+                    }}
+                  >
+                    <PhotoIcon
+                      className='h-6 w-6 mr-2 inline-block'
+                    />
+                    Upload Image 
+                  </button>
+
                   <div>
                     {image && (
                       <Image 
@@ -91,10 +103,15 @@ function Modal() {
                         width={200}
                         height={200}
                         className='w-full h-44 object-cover mt-2 filter hover:grayscale transition-all duration-150 cursor-not-allowed'
+                        onClick={() => {
+                          setImage(null)
+                        }}
+                        
                       />
                     )}
                   
                   </div>
+
                   <input
                     type="file"
                     ref={imagePickerRef}
