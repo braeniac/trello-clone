@@ -19,8 +19,8 @@ interface BoardState {
     newTaskType: TypedColumn; 
     setNewTaskType: (type: TypedColumn) => void; 
 
-    image : File | null; 
-    setImage : (image: File | null) => void; 
+    image: File | null; 
+    setImage: (image: File | null) => void; 
 
 }   
 
@@ -40,9 +40,9 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     set({ board }); 
   },
 
-  image: null, 
-  setImage: (image) => set({ image }), 
-
+  image: null,
+  setImage: (image: File | null) => set({ image }),
+  
   newTaskType: "todo",
   setNewTaskType: (type) => set({ newTaskType: type }),
   

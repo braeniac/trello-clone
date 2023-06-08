@@ -4,6 +4,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useModalStore } from '@/store/ModalStore'
 import { useBoardStore } from '@/store/BoardStore';
 import TaskTypeRadioGroup from './TaskTypeRadioGroup';
+import Image from 'next/image';
 
 function Modal() {
 
@@ -13,9 +14,10 @@ function Modal() {
         state.closeModal
     ]); 
 
-    const [newTaskInput, setNewTaskInput, setImage] = useBoardStore((state) => [
+    const [newTaskInput, setNewTaskInput, image, setImage] = useBoardStore((state) => [
         state.newTaskInput, 
         state.setNewTaskInput,
+        state.image, 
         state.setImage
     ])
 
@@ -77,17 +79,31 @@ function Modal() {
                 {/* radio group  */}
                 <TaskTypeRadioGroup />
 
+                
+
                 {/* file picker */}
                 <div>
-                  <input 
+                  <div>
+                    {image && (
+                      <Image 
+                        src={URL.createObjectURL(image)}
+                        alt="uploaded Image"
+                        width={200}
+                        height={200}
+                        className='w-full h-44 object-cover mt-2 filter hover:grayscale transition-all duration-150 cursor-not-allowed'
+                      />
+                    )}
+                  
+                  </div>
+                  <input
                     type="file"
                     ref={imagePickerRef}
-                    hidden 
+                    accept="image/*"
+                    hidden
                     onChange={(e) => {
-                      if (!e.target.files![0].type.startsWith("image/")) return
-                      setImage(e.target.files![0]) 
+                      if (!e.target.files![0].type.startsWith("image/")) return;
+                      setImage(e.target.files![0]);
                     }}
-                  
                   />
                 </div>
 
