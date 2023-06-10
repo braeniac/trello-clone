@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { getTodosGroupedByColumn } from '@/lib/getTodosGroupedByColumn'; 
-import { databases, storage } from '@/appwrite';
+import { ID, databases, storage } from '@/appwrite';
+import uploadImage from '@/lib/uploadImage';
 
 interface BoardState {
     board : Board;
@@ -21,6 +22,8 @@ interface BoardState {
 
     image: File | null; 
     setImage: (image: File | null) => void; 
+
+    addTask : (todo: string, columnId: TypedColumn, image?: File | null) => void; 
 
 }   
 
@@ -51,6 +54,68 @@ export const useBoardStore = create<BoardState>((set, get) => ({
      set({ newTaskInput : input })
   },
 
+  addTask : async (todo, columnId, image) => {
+    
+    //upload image 
+    let file : Image | undefined; 
+
+    if (image) {
+      const fileUploaded = await uploadImage(image); 
+      if (fileUploaded) {
+        file = {
+          bucketId : fileUploaded.bucketId, 
+          fileId : fileUploaded.$id
+        }
+      }
+    }
+
+    //create document in appwrite 
+    const { $id } = await databases.createDocument(
+      process.env.NEXT_PUBLIC_DATABASE_ID!, 
+      process.env.NEXT_PUBLIC_TODOS_COLLECTION_ID!, 
+      ID.unique(), 
+      {
+        title : todo, 
+        status: columnId, 
+        //include image if it exists 
+        ...(file && { image : JSON.stringify(file) })
+      }
+    ); 
+
+    set({ newTaskInput: "" }); 
+
+    set((state) => {
+      const newColumns = new Map(state.board.columns); 
+
+      const newTodo: todo = {
+        $id, 
+        $createdAt: new Date().toISOString(), 
+        title: todo, 
+        status: columnId, 
+        //include image if it exists 
+        ...(file && { image : file })
+      }
+
+      const column = newColumns.get(columnId)
+
+      if (!column) {
+        newColumns.set(columnId, {
+          id: columnId,
+          todos: [newTodo],
+        }); 
+      } else {
+        newColumns.get(columnId)?.todos.push(newTodo);
+      }
+
+      return{ 
+        board: {
+          columns: newColumns
+        }
+      }
+
+    });
+  },
+
   updateTodoInDb : async (todo, columnId) => {
     await databases.updateDocument(
       process.env.NEXT_PUBLIC_DATABASE_ID!,
@@ -76,7 +141,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
     //if task has an image 
     if (todo.image) {
-      await storage.deleteFile(todo.image.bucketID, todo.image.fileID); 
+      await storage.deleteFile(todo.image.bucketId, todo.image.fileId); 
     }
 
     //delete task from appwrite

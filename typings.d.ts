@@ -18,6 +18,6 @@ interface todo {
 }
 
 interface Image {
-    bucketID: string; 
-    fileID: string; 
+    bucketId: string; 
+    fileId: string; 
 }
