@@ -101,6 +101,7 @@ function Modal() {
                 <div>
 
                   <button
+                    type="button"
                     className='w-full border border-gray-300 rounded-md outline-none p-5 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
                     onClick={() => {
                       imagePickerRef.current?.click()
